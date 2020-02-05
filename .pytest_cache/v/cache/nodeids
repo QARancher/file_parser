@@ -1,0 +1,6 @@
+[
+  "test_search.py::TestSearch::()::test_search_in_files[god-10]",
+  "test_search.py::TestSearch::()::test_search_in_files[[0-9]-10]",
+  "test_search.py::TestSearch::()::test_search_in_files[\\\\wgod+-10]",
+  "test_search.py::TestSearch::()::test_search_in_files[god |war-10]"
+]

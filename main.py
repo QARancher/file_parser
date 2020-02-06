@@ -31,7 +31,7 @@ def main():
                              "be loaded "
                              "in memory rather on disk. Use this flag for "
                              "large files.")
-    parser.add_argument("-f", "--file", dest="inputfile",
+    parser.add_argument("-f", "--file", dest="inputfile", required=True,
                         help="Optional - a list of files to search in. If this "
                              "parameter is omitted, the script expects text "
                              "input from STDIN as the last argument",

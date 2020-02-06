@@ -6,12 +6,14 @@ from search_in_file import SearchClass
 
 
 def main():
-    usage = "{prog} -f <list_of_files> -r <regex> -u <True/False> -c " \
-            "<True/False> -m <True/False>" \
-            "The script that searches for a pattern using a regular " \
-            "expression in lines of text, and prints the lines which contain" \
-            " matching text. The script's output format should be:" \
-            " 'file_name line_number line'".format(prog=sys.argv[0])
+    usage = "{prog} python main.py --file=<list_of_files> --regex=<str or " \
+            "regex> --machine=<True/False> --file= path to a file to search " \
+            "in, can take a list of files. --regex= regex or string to search" \
+            " for in the file. --machine= optional - if true - print the output" \
+            " in the format: \ 'file_name:line_number:start_position:matched" \
+            "_text'. the matched lines with the number of lines are saved in" \
+            " output.txt file. in the format:" \
+            " file_name line_number line".format(prog=sys.argv[0])
     if len(sys.argv) == 2:
         print("Wrong usage! \n {usage}".format(usage=usage))
         sys.exit(1)

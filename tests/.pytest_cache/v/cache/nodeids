@@ -1,10 +1,6 @@
 [
-  "test_search.py::TestSearch::()::test_search_in_files_with_format_types[format_types_attributes0]",
-  "test_search.py::TestSearch::()::test_search_in_files_with_format_types[format_types_attributes1]",
-  "test_search.py::TestSearch::()::test_search_in_files_with_format_types[format_types_attributes2]",
-  "test_search.py::TestSearch::()::test_search_in_files_with_format_types[format_types_attributes3]",
-  "test_search.py::TestSearch::()::test_search_in_files_with_format_types[format_types_attributes4]",
-  "test_search.py::TestSearch::()::test_search_in_files_with_format_types[format_types_attributes5]",
-  "test_search.py::TestSearch::()::test_search_in_files_with_format_types[format_types_attributes6]",
-  "test_search.py::TestSearch::()::test_search_in_files_with_format_types[format_types_attributes7]"
+  "test_search.py::TestSearch::()::test_search_in_files_times[god-10]",
+  "test_search.py::TestSearch::()::test_search_in_files_times[[0-9]-10]",
+  "test_search.py::TestSearch::()::test_search_in_files_times[\\\\wgod+-10]",
+  "test_search.py::TestSearch::()::test_search_in_files_times[god |war-10]"
 ]

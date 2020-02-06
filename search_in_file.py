@@ -83,16 +83,16 @@ class FileParser(dict):
             uline = "^{str_start}".format(
                 str_start=obj.string[obj.start()])
             wline.join(uline)
-        if not machine:
-            wline.join("{file_name} {num_line} {line_text}".format(
-                num_line=num_line, line_text=obj.string,
-                file_name=self.in_file))
-        else:
+        if machine:
             wline = "{file_name}:{num_line}:{start_position}:" \
                     "{line_text}".format(file_name=self.in_file,
                                          start_position=obj.start(),
                                          num_line=num_line,
                                          line_text=obj.string)
+        else:
+            wline = "{file_name} {num_line} {line_text}".format(
+                num_line=num_line, line_text=obj.string,
+                file_name=self.in_file)
         return wline
 
     def write_to_file(self,
@@ -133,7 +133,7 @@ class SearchClass(FileParser):
             raise InvalidInputFile(message="No file was passed: "
                                            "{file}".format(
                                                     file=str(self.in_file)))
-        logger.debug("Parsing file: {file} searching for {pattern}".format(
+        logger.info("Parsing file: {file} searching for {pattern}".format(
             file=self.in_file, pattern=self.search_str))
         self.write_to_file(**kwargs)
 

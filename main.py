@@ -50,11 +50,15 @@ def main():
                              ":matched_text'")
 
     args = parser.parse_args()
-    srch = SearchClass(search_str=args.regex)
+
     if not args.inputfile:
+        srch = SearchClass(search_str=args.regex)
         srch.search_in_string(searched_line=sys.stdin)
     for file in args.inputfile:
-        srch.search_in_file(in_file=file, buffer=args.buffer)
+        srch = SearchClass(search_str=args.regex,
+                           in_file=file,
+                           buffer_size=args.buffer)
+        srch.search_in_file()
 
 
 if __name__ == "__main__":

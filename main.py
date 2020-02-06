@@ -6,22 +6,24 @@ from search_in_file import SearchClass
 
 
 def main():
-    usage = "{prog} python main.py --file=<list_of_files> --regex=<str or " \
-            "regex> --machine=<True/False> --file= path to a file to search " \
-            "in, can take a list of files. --regex= regex or string to search" \
-            " for in the file. --machine= optional - if true - print the output" \
-            " in the format: \ 'file_name:line_number:start_position:matched" \
-            "_text'. the matched lines with the number of lines are saved in" \
-            " output.txt file. in the format:" \
-            " file_name line_number line".format(prog=sys.argv[0])
-    if len(sys.argv) == 2:
+    usage = "{prog} --file=<list_of_files> --regex=<str or " \
+            "regex> --machine=<True/False>\n" \
+            "--file= path to a file to search in, can take a list of files.\n" \
+            "--regex= regex or string to search for in the file.\n" \
+            "--machine= optional - if true - print the output" \
+            " in the format:\n " \
+            "'file_name:line_number:start_position:matched_text'.\n" \
+            "The matched lines with the number of lines are saved in" \
+            "output.txt file. in the format:\n" \
+            "file_name line_number line\n".format(prog=sys.argv[0])
+    if len(sys.argv) == 1:
         print("Wrong usage! \n {usage}".format(usage=usage))
         sys.exit(1)
     print('ARGV      :{args}'.format(args=sys.argv[1:]))
     parser = ArgumentParser(usage=usage)
     parser.add_argument("-r", "--regex",
                         action="store", dest="regex", default="god",
-                        required=False, help="Mandatory - the regular "
+                        required=True, help="Mandatory - the regular "
                                              "expression to search for.")
     parser.add_argument("-b", "--buffer", dest="buffer", type=int,
                         required=False,

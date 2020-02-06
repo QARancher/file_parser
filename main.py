@@ -6,13 +6,16 @@ from search_in_file import SearchClass
 
 
 def main():
-    print('ARGV      :{args}'.format(args=sys.argv[1:]))
     usage = "{prog} -f <list_of_files> -r <regex> -u <True/False> -c " \
             "<True/False> -m <True/False>" \
             "The script that searches for a pattern using a regular " \
             "expression in lines of text, and prints the lines which contain" \
             " matching text. The script's output format should be:" \
             " 'file_name line_number line'".format(prog=sys.argv[0])
+    if len(sys.argv) == 2:
+        print("Wrong usage! \n {usage}".format(usage=usage))
+        sys.exit(1)
+    print('ARGV      :{args}'.format(args=sys.argv[1:]))
     parser = ArgumentParser(usage=usage)
     parser.add_argument("-r", "--regex",
                         action="store", dest="regex", default="god",

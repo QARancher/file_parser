@@ -6,7 +6,7 @@ from search_in_file import SearchClass
 
 
 def main():
-    usage = "{prog} --file=<list_of_files> --regex=<str or " \
+    usage = "python {prog} --file=<list_of_files> --regex=<str or " \
             "regex> --machine=<True/False>\n" \
             "--file= path to a file to search in, can take a list of files.\n" \
             "--regex= regex or string to search for in the file.\n" \

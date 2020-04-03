@@ -1,6 +1,0 @@
-{
-  "test_search.py::TestSearch::()::test_search_in_files[[0-9]-100]": true,
-  "test_search.py::TestSearch::()::test_search_in_files[\\\\wgod+-100]": true,
-  "test_search.py::TestSearch::()::test_search_in_files[god |war-100]": true,
-  "test_search.py::TestSearch::()::test_search_in_files[god-100]": true
-}

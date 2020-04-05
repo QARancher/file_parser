@@ -98,14 +98,7 @@ class SearchClass(object):
                  search_str,
                  search_path,
                  buffer_size=None):
-        """
-        class that handles the output of the search result, writing to a
-        file in the requested format. implementing factory design pattern
-        by inheriting from FileParser class, using its capabilities to
-        load a text file, search by line and write the matches to output.txt
-        file (saved under this folder)
-        :param search_str: str or regex to search for
-        """
+
         self.search_str = search_str
         self.search_path = search_path
         self.buffer_size = buffer_size

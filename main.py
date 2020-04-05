@@ -2,11 +2,25 @@
 
 import sys
 from argparse import ArgumentParser
-from search_in_file import SearchClass
+
+from search.search_in_file import SearchClass
+
+
+def _single_true(iterable):
+    """
+    consume from "i" until first true or it's exhausted.
+    carry on consuming until another true value / exhausted
+    :param iterable: iterable object
+    :return: True if exactly one true found
+    """
+    iterator = iter(iterable)
+    has_true = any(iterator)
+    has_another_true = any(iterator)
+    return has_true and not has_another_true
 
 
 def main():
-    usage = "python {prog} --file=<list_of_files> --regex=<str or " \
+    usage = "python {prog} --file=<list_of_files> --search=<str or " \
             "regex> --machine=<True/False>\n" \
             "--file= path to a file to search in, can take a list of files.\n" \
             "--regex= regex or string to search for in the file.\n" \
@@ -17,25 +31,29 @@ def main():
             "output.txt file. in the format:\n" \
             "file_name line_number line\n".format(prog=sys.argv[0])
     if len(sys.argv) == 1:
-        print("Wrong usage! \n {usage}".format(usage=usage))
+        print("Wrong usage! \n ARGS: {args} \n{usage}".format(usage=usage,
+                                                              args=sys.argv[
+                                                                   1:]))
         sys.exit(1)
-    print('ARGV      :{args}'.format(args=sys.argv[1:]))
+    print('Search flags: {args}'.format(args=sys.argv[1:]))
     parser = ArgumentParser(usage=usage)
-    parser.add_argument("-r", "--regex",
+    parser.add_argument("-s", "--search",
                         action="store", dest="regex", default="god",
                         required=True, help="Mandatory - the regular "
-                                             "expression to search for.")
+                                            "expression to search for.")
     parser.add_argument("-b", "--buffer", dest="buffer", type=int,
-                        required=False,
                         help="Optional - Buffer size in Bytes for the file to "
                              "be loaded "
                              "in memory rather on disk. Use this flag for "
                              "large files.")
-    parser.add_argument("-f", "--file", dest="inputfile", required=True,
-                        help="Optional - a list of files to search in. If this "
-                             "parameter is omitted, the script expects text "
-                             "input from STDIN as the last argument",
-                        action="append")
+    files = parser.add_argument_group('files')
+    files.add_argument("-f", "--file", nargs="+",
+                       dest="inputfiles", default=[],
+                       help="List of files to search in.\n"
+                            "Optional - a list of "
+                            "files to search in. If this "
+                            "parameter is omitted, the script expects text "
+                            "input from STDIN as the last argument")
     pretty = parser.add_argument_group('pretty')
     pretty.add_argument("-u", "--underline ",
                         action="store_false", dest="underline",
@@ -53,14 +71,11 @@ def main():
 
     args = parser.parse_args()
 
-    if not args.inputfile:
-        srch = SearchClass(search_str=args.regex)
-        srch.search_in_string(searched_line=sys.stdin)
-    for file in args.inputfile:
+    for file in args.inputfiles:
         srch = SearchClass(search_str=args.regex,
-                           in_file=file,
+                           search_path=file,
                            buffer_size=args.buffer)
-        srch.search_in_file()
+        srch.search()
 
 
 if __name__ == "__main__":

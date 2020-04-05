@@ -2,7 +2,7 @@ import timeit
 import pytest
 from os import listdir, path
 
-from search_in_file import SearchClass
+from search.search_in_file import SearchClass
 
 
 file_dir = 'resources/'
@@ -60,8 +60,8 @@ class TestSearch:
         for test_num in range(num_loops):
             start = timeit.timeit()
             for file in files_list:
-                srch = SearchClass(search_str=search_str, in_file=file)
-                srch.search_in_file()
+                srch = SearchClass(search_str=search_str, search_path=file)
+                srch._search_in_file()
             stop = timeit.timeit()
             print("Test: {test}, "
                   "total time: {total}".format(test=test_num,
@@ -73,8 +73,8 @@ class TestSearch:
                                                format_types_attributes):
         start = timeit.timeit()
         for file in files_list:
-            srch = SearchClass(search_str="god|war", in_file=file)
-            srch.search_in_file(**format_types_attributes)
+            srch = SearchClass(search_str="god|war", search_path=file)
+            srch._search_in_file(**format_types_attributes)
         stop = timeit.timeit()
         print("total time: {total}".format(total=start - stop))
 

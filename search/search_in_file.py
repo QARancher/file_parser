@@ -1,13 +1,15 @@
 import logging
-from exceptions import SearchException, InvalidInputFile
+from os.path import isfile
 from re import compile, finditer, error
+
+from search.exceptions import SearchException, InvalidInputFile
 
 
 logger = logging.getLogger(__name__)
 
 
-def search(pattern,
-           searched_line):
+def _search(pattern,
+            searched_line):
     """
     method to search for string or regex in another string.
     :param pattern: the pattern to search for
@@ -39,16 +41,16 @@ class FileParser(dict):
         """
         super(FileParser, self).__init__()
         self.buffer_size = buffer_size or 1
-        self.in_file = in_file
+        self.search_path = in_file
         self.update(self._parser(search_str=search_str))
 
     def _load_line(self,
                    search_str):
         # read input file using buffering of 1 line.
-        with open(file=self.in_file, buffering=self.buffer_size) as \
+        with open(file=self.search_path, buffering=self.buffer_size) as \
                 line_to_parse:
             return [
-                search(pattern=search_str, searched_line=parsed_line)
+                _search(pattern=search_str, searched_line=parsed_line)
                 for parsed_line in line_to_parse.readlines()
             ]
 
@@ -85,14 +87,14 @@ class FileParser(dict):
             wline.join(uline)
         if machine:
             wline = "{file_name}:{num_line}:{start_position}:" \
-                    "{line_text}".format(file_name=self.in_file,
+                    "{line_text}".format(file_name=self.search_path,
                                          start_position=obj.start(),
                                          num_line=num_line,
                                          line_text=obj.string)
         else:
             wline = "{file_name} {num_line} {line_text}".format(
                 num_line=num_line, line_text=obj.string,
-                file_name=self.in_file)
+                file_name=self.search_path)
         return wline
 
     def write_to_file(self,
@@ -108,10 +110,10 @@ class FileParser(dict):
                                                               **kwargs)))
 
 
-class SearchClass(FileParser):
+class SearchClass(object):
     def __init__(self,
                  search_str,
-                 in_file=None,
+                 search_path=None,
                  buffer_size=None):
         """
         class that handles the output of the search result, writing to a
@@ -121,25 +123,48 @@ class SearchClass(FileParser):
         file (saved under this folder)
         :param search_str: str or regex to search for
         """
-        super(SearchClass, self).__init__(in_file=in_file,
-                                          search_str=search_str,
-                                          buffer_size=buffer_size)
         self.search_str = search_str
-        self.in_file = in_file
+        self.search_path = search_path
         self.buffer_size = buffer_size
+        if self.search_path and isfile(path=self.search_path):
+            self.src = SearchInFile(search_str=self.search_str,
+                                    search_path=self.search_path,
+                                    buffer_size=self.buffer_size)
+        elif self.search_path and isinstance(self.search_path, str):
+            self.src = SearchInString(search_str=self.search_str,
+                                      searched_line=self.search_path)
+        else:
+            raise InvalidInputFile("Failed to get files or string to search in")
 
-    def search_in_file(self, **kwargs):
-        if not self.in_file:
-            raise InvalidInputFile(message="No file was passed: "
-                                           "{file}".format(
-                                                    file=str(self.in_file)))
+    def search(self):
+        self.src.search()
+
+
+class SearchInFile(object):
+    def __init__(self,
+                 search_str,
+                 search_path=None,
+                 buffer_size=None):
+        self.search_str = search_str
+        self.search_path = search_path
+        self.buffer_size = buffer_size
+        self.fileparser = FileParser(search_str=self.search_str,
+                                     in_file=self.search_path,
+                                     buffer_size=self.buffer_size)
+
+    def search(self, **kwargs):
         logger.info("Parsing file: {file} searching for {pattern}".format(
-            file=self.in_file, pattern=self.search_str))
-        self.write_to_file(**kwargs)
+            file=self.search_path, pattern=self.search_str))
+        self.fileparser.write_to_file(**kwargs)
 
-    def search_in_string(self,
-                         searched_line):
+
+class SearchInString(object):
+    def __init__(self, search_str, searched_line):
+        self.search_str = search_str
+        self.searched_line = searched_line
+
+    def search(self):
         logger.debug("Searching for {pattern} in string: {str}".format(
-            pattern=self.search_str, str=searched_line))
-        print(search(pattern=self.search_str,
-                     searched_line=searched_line).string)
+            pattern=self.search_str, str=self.searched_line))
+        print(_search(pattern=self.search_str,
+                      searched_line=self.searched_line).string)

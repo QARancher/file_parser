@@ -5,19 +5,19 @@ The script's output format should be: 'file_name line_number line'
 run the following command from linux CLI:   
   
 
-    python main.py --file=<list_of_files> --regex=<str or regex> --machine=<True/False> 
+    python main.py --file=<list_of_files> --search=<str or regex> --machine=<True/False> 
 
  
   
 i.e  
   
 
-    python3 main.py --regex='god' --file='~/file_parser/tests/resources/The_Kingdom_of_God_Is_Within_You_by_graf_Leo_Tolstoy.txt'
+    python3 main.py --search='god' --file='~/file_parser/tests/resources/The_Kingdom_of_God_Is_Within_You_by_graf_Leo_Tolstoy.txt'
 
   flags:
 
-     --file= path to a file to search in, can take a list of files.  
-    --regex= regex or string to search for in the file.  
+    --file= path to a file to search in, can take a list of files.  
+    --search= regex or string to search for in the file.  
     --machine= optional - if true - print the output in the format: "file_name:line_number:start_position:matched_text".  
 
   

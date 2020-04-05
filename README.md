@@ -12,7 +12,7 @@ run the following command from linux CLI:
 i.e  
   
 
-    python3 main.py --search='god' --file='~/file_parser/tests/resources/The_Kingdom_of_God_Is_Within_You_by_graf_Leo_Tolstoy.txt'
+    python3 main.py --search='god' --file=~/file_parser/tests/resources/The_Kingdom_of_God_Is_Within_You_by_graf_Leo_Tolstoy.txt
 
   flags:
 

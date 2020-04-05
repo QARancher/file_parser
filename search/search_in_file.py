@@ -1,29 +1,12 @@
 import logging
-from os.path import isfile
-from re import compile, finditer, error
+from os import listdir
+from os.path import isfile, isdir, join
 
-from search.exceptions import SearchException, InvalidInputFile
+from search.exceptions import InvalidInputFile, EmptyDirectory
+from search.utils import search
 
 
 logger = logging.getLogger(__name__)
-
-
-def _search(pattern,
-            searched_line):
-    """
-    method to search for string or regex in another string.
-    :param pattern: the pattern to search for
-    :param searched_line: string line as it pass from the file parser
-    :return: matched object of type re
-    :raise: SearchException if the strings invalid
-    """
-    try:
-        pattern = compile(pattern)
-        for match in finditer(pattern=pattern, string=searched_line):
-            return match
-    except error:
-        raise SearchException(message="Failed compiling pattern"
-                                      " {pattern}".format(pattern=pattern))
 
 
 class FileParser(dict):
@@ -50,7 +33,7 @@ class FileParser(dict):
         with open(file=self.search_path, buffering=self.buffer_size) as \
                 line_to_parse:
             return [
-                _search(pattern=search_str, searched_line=parsed_line)
+                search(pattern=search_str, searched_line=parsed_line)
                 for parsed_line in line_to_parse.readlines()
             ]
 
@@ -113,7 +96,7 @@ class FileParser(dict):
 class SearchClass(object):
     def __init__(self,
                  search_str,
-                 search_path=None,
+                 search_path,
                  buffer_size=None):
         """
         class that handles the output of the search result, writing to a
@@ -126,11 +109,19 @@ class SearchClass(object):
         self.search_str = search_str
         self.search_path = search_path
         self.buffer_size = buffer_size
-        if self.search_path and isfile(path=self.search_path):
+
+        if not self.search_path:
+            raise InvalidInputFile("Failed to get files or string to search in")
+
+        if isfile(path=self.search_path):
             self.src = SearchInFile(search_str=self.search_str,
                                     search_path=self.search_path,
                                     buffer_size=self.buffer_size)
-        elif self.search_path and isinstance(self.search_path, str):
+        elif isdir(self.search_path):
+            self.src = SearchInDirectory(search_str=self.search_str,
+                                         search_path=self.search_path,
+                                         buffer_size=self.buffer_size)
+        elif isinstance(self.search_path, str):
             self.src = SearchInString(search_str=self.search_str,
                                       searched_line=self.search_path)
         else:
@@ -148,14 +139,14 @@ class SearchInFile(object):
         self.search_str = search_str
         self.search_path = search_path
         self.buffer_size = buffer_size
-        self.fileparser = FileParser(search_str=self.search_str,
-                                     in_file=self.search_path,
-                                     buffer_size=self.buffer_size)
 
     def search(self, **kwargs):
+        fileparser = FileParser(search_str=self.search_str,
+                                in_file=self.search_path,
+                                buffer_size=self.buffer_size)
         logger.info("Parsing file: {file} searching for {pattern}".format(
             file=self.search_path, pattern=self.search_str))
-        self.fileparser.write_to_file(**kwargs)
+        fileparser.write_to_file(**kwargs)
 
 
 class SearchInString(object):
@@ -164,7 +155,35 @@ class SearchInString(object):
         self.searched_line = searched_line
 
     def search(self):
-        logger.debug("Searching for {pattern} in string: {str}".format(
+        logger.info("Searching for {pattern} in string: {str}".format(
             pattern=self.search_str, str=self.searched_line))
-        print(_search(pattern=self.search_str,
-                      searched_line=self.searched_line).string)
+        print(search(pattern=self.search_str,
+                     searched_line=self.searched_line).string)
+
+
+class SearchInDirectory(object):
+    def __init__(self,
+                 search_str,
+                 search_path,
+                 buffer_size=None):
+        self.search_str = search_str
+        self.search_path = search_path
+        self.buffer_size = buffer_size
+
+    def search(self):
+        files_list = self._get_all_text_file_from_dir(
+            directory=self.search_path)
+        if not files_list:
+            raise EmptyDirectory(directory=self.search_path)
+        for file in files_list:
+            fileparser = FileParser(search_str=self.search_str,
+                                    in_file=file,
+                                    buffer_size=self.buffer_size)
+            logger.info("Parsing file: {file} searching for {pattern}".format(
+                file=file, pattern=self.search_str))
+            fileparser.write_to_file()
+
+    @staticmethod
+    def _get_all_text_file_from_dir(directory):
+        return [join(directory, f) for f in listdir(path=directory)
+                if f.endswith(".txt")]

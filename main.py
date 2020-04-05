@@ -47,7 +47,7 @@ def main():
                              "in memory rather on disk. Use this flag for "
                              "large files.")
     files = parser.add_argument_group('files')
-    files.add_argument("-f", "--file", nargs="+",
+    files.add_argument("-f", "--file", action="append",
                        dest="inputfiles", default=[],
                        help="List of files to search in.\n"
                             "Optional - a list of "

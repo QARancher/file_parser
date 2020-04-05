@@ -10,8 +10,15 @@ class SearchException(FileParserException):
         super(SearchException, self).__init__(message)
 
 
-class InvalidInputFile(FileParserException):
+class InvalidInputFile(Exception):
     def __init__(self,
                  message):
         message = "Invalid input file. {message}".format(message=message)
         super(InvalidInputFile, self).__init__(message)
+
+
+class EmptyDirectory(Exception):
+    def __init__(self, directory, *args):
+        message = "No .txt file were found in the given directory " \
+                  "{dir}".format(dir=directory)
+        super(EmptyDirectory, self).__init__(message, *args)

@@ -66,8 +66,7 @@ def main():
                         action="store_false", dest="color", default=False,
                         help="optional - the matched text is highlighted in "
                              "color")
-    pretty.add_argument("-m", "--machine",
-                        action="store_false", dest="machine", default=False,
+    pretty.add_argument("-m", "--machine", dest="machine", default=False,
                         help="optional - print the output in the format: "
                              "'file_name:line_number:start_position"
                              ":matched_text'")
@@ -79,6 +78,8 @@ def main():
                            search_path=file,
                            buffer_size=args.buffer,
                            output_file=args.output_file)
+        if args.machine:
+            srch.set_machine(machine=True)
         srch.search()
 
 

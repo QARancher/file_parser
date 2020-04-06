@@ -5,7 +5,6 @@ from os.path import isfile, isdir, join
 from search.exceptions import InvalidInputFile, EmptyDirectory
 from search.utils import search
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -106,6 +105,9 @@ class SearchClass(object):
         self.search_path = search_path
         self.buffer_size = buffer_size
         self.output_file = output_file
+        self.machine = False
+        self.color = None
+        self.underline = None
 
         if not self.search_path:
             raise InvalidInputFile("Failed to get files or string to search in")
@@ -128,7 +130,32 @@ class SearchClass(object):
         else:
             raise InvalidInputFile("Failed to get files or string to search in")
 
-    def search(self, **kwargs):
+    def set_machine(self,
+                    machine):
+        self.machine = machine
+
+    def get_machine(self):
+        return self.machine
+
+    def set_color(self,
+                  color):
+        self.color = color
+
+    def get_color(self):
+        return self.color
+
+    def set_underline(self,
+                      underline):
+        self.underline = underline
+
+    def get_underline(self):
+        return self.underline
+
+    def _create_format_dict(self):
+        return dict(machine=self.get_machine(), color=self.get_color(), underline=self.get_underline())
+
+    def search(self):
+        kwargs = self._create_format_dict()
         self.src.search(**kwargs)
 
 

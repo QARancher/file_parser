@@ -1,8 +1,9 @@
-import timeit
+from os.path import isfile
+
 import pytest
 from os import listdir, path
 
-from search.search_in_file import SearchClass
+from tests.utils import search_in_files, search_in_directory
 
 file_dir = 'resources/'
 files_list = [path.join(file_dir, file) for file in listdir(file_dir)]
@@ -41,30 +42,41 @@ def format_types():
         }
 
 
+def benchmark_it(func, file, search_str, ofile):
+    def wrapper(benchmark):
+        benchmark(func, file, search_str, ofile)
+
+    return wrapper
+
+
 class TestSearch:
+    @pytest.mark.benchmark(min_rounds=10)
+    def test_search_in_directory(self,
+                                 benchmark):
+
+        ofile = 'out_test_search_in_files.text'
+
+        @benchmark
+        def result():
+            return search_in_directory(path='resources/', search_str='god', ofile=ofile)
+
+        assert isfile(ofile)
+
     @pytest.mark.parametrize("search_str",
                              ['god', '[0-9]', '\wgod+', 'god |war'])
     def test_search_in_files(self,
-                            search_str):
+                             search_str,
+                             benchmark):
         """
         Test E2E search for file. the test runs over the resource dir with txt
          run the test multiple times, measuring performance over time.
         :param search_str: the regex to search for, use strings as it was regex
         """
-        for file in files_list:
-            srch = SearchClass(search_str=search_str, search_path=file)
-            srch.search()
 
-    # TODO - fix underline and color funtion will failed.
-    @pytest.mark.parametrize("format_types_attributes", format_types())
-    def test_search_in_files_with_format_types(self,
-                                               format_types_attributes):
-        start = timeit.timeit()
-        for file in files_list:
-            srch = SearchClass(search_str="god|war", search_path=file)
-            srch.search(**format_types_attributes)
-        stop = timeit.timeit()
-        print("total time: {total}".format(total=start - stop))
+        ofile = 'out_test_search_in_dir.text'
+        kwargs = {"files_list": files_list, "search_str": search_str, "ofile": ofile}
+        benchmark(search_in_files, **kwargs)
+        assert isfile(ofile)
 
 
 if __name__ == "__main__":

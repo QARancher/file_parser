@@ -6,7 +6,7 @@ The script's output format should be: 'file_name line_number line'
 run the following command from linux CLI:   
   
 
-    python main.py --file=<list_of_files> --search=<str or regex> --machine=<True/False> 
+    python main.py --file=<list_of_files> --search=<str or regex> --output=<output_file_name> --machine=<True/False>  
 
  
   
@@ -31,7 +31,8 @@ search in string:
 flags:
 
     --file= path to a file to search in, accepts directory, files, if string is given the search will be on that string 
-    --search= regex or string to search for in the file.  
+    --search= regex or string to search for in the file.
+    --output= optional flag for output file's name 
     --machine= optional - if true - print the output in the format: "file_name:line_number:start_position:matched_text".  
 
   

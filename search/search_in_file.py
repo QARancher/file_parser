@@ -81,12 +81,14 @@ class FileParser(dict):
         return wline
 
     def write_to_file(self,
+                      ofile="output.txt",
                       **kwargs):
         """
-        Write to output.txt file the matched lines, with the format that is
+         Write to file the matched lines, with the format that is
         passed via kwargs
+        :param ofile: output file to write into.
         """
-        with open(file='output.txt', mode='a') as ofile:
+        with open(file=ofile, mode='a') as ofile:
             for num_line, obj in self.items():
                 ofile.write(str(self._construct_output_string(num_line=num_line,
                                                               obj=obj,
@@ -97,23 +99,29 @@ class SearchClass(object):
     def __init__(self,
                  search_str,
                  search_path,
+                 output_file,
                  buffer_size=None):
 
         self.search_str = search_str
         self.search_path = search_path
         self.buffer_size = buffer_size
+        self.output_file = output_file
 
         if not self.search_path:
             raise InvalidInputFile("Failed to get files or string to search in")
-
+        # check if the input is a file to search in
         if isfile(path=self.search_path):
             self.src = SearchInFile(search_str=self.search_str,
                                     search_path=self.search_path,
+                                    output_file=self.output_file,
                                     buffer_size=self.buffer_size)
+        # check if the input is directory to search in
         elif isdir(self.search_path):
             self.src = SearchInDirectory(search_str=self.search_str,
+                                         output_file=self.output_file,
                                          search_path=self.search_path,
                                          buffer_size=self.buffer_size)
+        # check if the input is a string to search in
         elif isinstance(self.search_path, str):
             self.src = SearchInString(search_str=self.search_str,
                                       searched_line=self.search_path)
@@ -127,11 +135,13 @@ class SearchClass(object):
 class SearchInFile(object):
     def __init__(self,
                  search_str,
-                 search_path=None,
-                 buffer_size=None):
+                 search_path,
+                 buffer_size=None,
+                 output_file=None):
         self.search_str = search_str
         self.search_path = search_path
         self.buffer_size = buffer_size
+        self.output_file = output_file
 
     def search(self, **kwargs):
         fileparser = FileParser(search_str=self.search_str,
@@ -139,7 +149,7 @@ class SearchInFile(object):
                                 buffer_size=self.buffer_size)
         logger.info("Parsing file: {file} searching for {pattern}".format(
             file=self.search_path, pattern=self.search_str))
-        fileparser.write_to_file(**kwargs)
+        fileparser.write_to_file(ofile=self.output_file, **kwargs)
 
 
 class SearchInString(object):
@@ -158,10 +168,12 @@ class SearchInDirectory(object):
     def __init__(self,
                  search_str,
                  search_path,
+                 output_file=None,
                  buffer_size=None):
         self.search_str = search_str
         self.search_path = search_path
         self.buffer_size = buffer_size
+        self.output_file = output_file
 
     def search(self, **kwargs):
         files_list = self._get_all_text_file_from_dir(
@@ -174,7 +186,7 @@ class SearchInDirectory(object):
                                     buffer_size=self.buffer_size)
             logger.info("Parsing file: {file} searching for {pattern}".format(
                 file=file, pattern=self.search_str))
-            fileparser.write_to_file(**kwargs)
+            fileparser.write_to_file(ofile=self.output_file, **kwargs)
 
     @staticmethod
     def _get_all_text_file_from_dir(directory):

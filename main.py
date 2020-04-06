@@ -24,6 +24,7 @@ def main():
             "regex> --machine=<True/False>\n" \
             "--file= path to a file to search in, can take a list of files.\n" \
             "--regex= regex or string to search for in the file.\n" \
+            "--output= optional flag for output file's name\n" \
             "--machine= optional - if true - print the output" \
             " in the format:\n " \
             "'file_name:line_number:start_position:matched_text'.\n" \
@@ -46,6 +47,8 @@ def main():
                              "be loaded "
                              "in memory rather on disk. Use this flag for "
                              "large files.")
+    parser.add_argument("-o", "--output", dest="output_file", default="output.txt",
+                        help="Optional - output file's name to write to the matched lines")
     files = parser.add_argument_group('files')
     files.add_argument("-f", "--file", action="append",
                        dest="inputfiles", default=[],
@@ -74,7 +77,8 @@ def main():
     for file in args.inputfiles:
         srch = SearchClass(search_str=args.regex,
                            search_path=file,
-                           buffer_size=args.buffer)
+                           buffer_size=args.buffer,
+                           output_file=args.output_file)
         srch.search()
 
 

@@ -4,7 +4,6 @@ from os import listdir, path
 
 from search.search_in_file import SearchClass
 
-
 file_dir = 'resources/'
 files_list = [path.join(file_dir, file) for file in listdir(file_dir)]
 
@@ -43,29 +42,18 @@ def format_types():
 
 
 class TestSearch:
-    @pytest.mark.parametrize("search_str,num_loops",
-                             [('god', 10), ('[0-9]', 10),
-                              ('\wgod+', 10), ('god |war',
-                                               10)])
-    def test_search_in_files_times(self,
-                                   search_str,
-                                   num_loops):
+    @pytest.mark.parametrize("search_str",
+                             ['god', '[0-9]', '\wgod+', 'god |war'])
+    def test_search_in_files(self,
+                            search_str):
         """
-        Test the time to search for a string or regex in a file,
+        Test E2E search for file. the test runs over the resource dir with txt
          run the test multiple times, measuring performance over time.
         :param search_str: the regex to search for, use strings as it was regex
-        :param num_loops: number of loops to run each test.
-        :return: execution times are printed to the screen
         """
-        for test_num in range(num_loops):
-            start = timeit.timeit()
-            for file in files_list:
-                srch = SearchClass(search_str=search_str, search_path=file)
-                srch._search_in_file()
-            stop = timeit.timeit()
-            print("Test: {test}, "
-                  "total time: {total}".format(test=test_num,
-                                               total=start - stop))
+        for file in files_list:
+            srch = SearchClass(search_str=search_str, search_path=file)
+            srch.search()
 
     # TODO - fix underline and color funtion will failed.
     @pytest.mark.parametrize("format_types_attributes", format_types())
@@ -74,7 +62,7 @@ class TestSearch:
         start = timeit.timeit()
         for file in files_list:
             srch = SearchClass(search_str="god|war", search_path=file)
-            srch._search_in_file(**format_types_attributes)
+            srch.search(**format_types_attributes)
         stop = timeit.timeit()
         print("total time: {total}".format(total=start - stop))
 

@@ -120,8 +120,8 @@ class SearchClass(object):
         else:
             raise InvalidInputFile("Failed to get files or string to search in")
 
-    def search(self):
-        self.src.search()
+    def search(self, **kwargs):
+        self.src.search(**kwargs)
 
 
 class SearchInFile(object):
@@ -147,7 +147,7 @@ class SearchInString(object):
         self.search_str = search_str
         self.searched_line = searched_line
 
-    def search(self):
+    def search(self, **kwargs):
         logger.info("Searching for {pattern} in string: {str}".format(
             pattern=self.search_str, str=self.searched_line))
         print(search(pattern=self.search_str,
@@ -163,7 +163,7 @@ class SearchInDirectory(object):
         self.search_path = search_path
         self.buffer_size = buffer_size
 
-    def search(self):
+    def search(self, **kwargs):
         files_list = self._get_all_text_file_from_dir(
             directory=self.search_path)
         if not files_list:
@@ -174,7 +174,7 @@ class SearchInDirectory(object):
                                     buffer_size=self.buffer_size)
             logger.info("Parsing file: {file} searching for {pattern}".format(
                 file=file, pattern=self.search_str))
-            fileparser.write_to_file()
+            fileparser.write_to_file(**kwargs)
 
     @staticmethod
     def _get_all_text_file_from_dir(directory):
